@@ -19,7 +19,7 @@ F_OBJ	= 	$(F_SRC:.s=.o)
 F_EXE =		$(F_SRC:.s=)
 F_SH		=		./bash.sh
 
-NASM	=		nasm -f macho64
+NASM	=		nasm -f macho64 --prefix _
 LD		=		ld -macosx_version_min 10.7.0 -lSystem
 
 D_INC	=		./inc/
@@ -62,14 +62,15 @@ $(NAME): $(OBJ)
 		ar rc $(NAME) $(OBJ)
 		ranlib $(NAME)
 
-$(OBJ)%.o:
-		echo "$(CL_B)>Creat: Object file..$(CL_N)"
+$(D_OBJ)%.o: $(D_SRC)
 		mkdir -p $(D_OBJ)
-		echo $@
-		sh $(F_SH) "$(@)"
+		$(NASM) $(INC) $< -o $@
 
-		# echo $>
-		# $(NASM) -o $@ $^
+# $(OBJ)%.o:
+# 		echo "$(CL_B)>Creat: Object file..$(CL_N)"
+# 		mkdir -p $(D_OBJ)
+# 		echo $@
+# 		sh $(F_SH) "$(@)"
 
 clean:
 		@echo "$(CL_R)>clean: $(CL_B)$(NAME) objects$(CL_N)"
@@ -82,9 +83,9 @@ fclean: clean
 
 re: fclean all
 
-# run: $(OBJ) $(EXE)
+run: $(OBJ) $(EXE)
 
-# $(EXE)%: $(OBJ)%.o
-# 		@echo "$(CL_V)>Creat: exec file..$(CL_N)"
-# 		@mkdir -p $(D_EXE)
-# 		@$(LD) $^ -o $@
+$(D_EXE)%: $(D_OBJ)
+		echo "$(CL_V)>Creat: exec file..$(CL_N)"
+		mkdir -p $(D_EXE)
+		$(LD) $^ -o $@
