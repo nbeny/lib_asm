@@ -13,8 +13,8 @@
 NAME	=		libasm.a
 
 F_INC =		libasm.h
-F_SRC =		syscall.s\
-					hello_world.s
+F_SRC =		hello_world.s\
+					syscall.s
 F_OBJ	= 	$(F_SRC:.s=.o)
 F_EXE =		$(F_SRC:.s=)
 F_SH		=		./bash.sh
@@ -58,19 +58,14 @@ INC		= 	$(addprefix -I, $(D_INC))
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		echo "\n>$(CL_B)Build: $(CL_BG)$(NAME)$(CL_N)"
-		ar rc $(NAME) $(OBJ)
-		ranlib $(NAME)
+		@echo "\n>$(CL_B)Build: $(CL_BG)$(NAME)$(CL_N)"
+		@ar rc $(NAME) $(OBJ)
+		@ranlib $(NAME)
 
 $(D_OBJ)%.o: $(D_SRC)
-		mkdir -p $(D_OBJ)
-		$(NASM) $(INC) $< -o $@
-
-# $(OBJ)%.o:
-# 		echo "$(CL_B)>Creat: Object file..$(CL_N)"
-# 		mkdir -p $(D_OBJ)
-# 		echo $@
-# 		sh $(F_SH) "$(@)"
+		@echo "$(CL_B)>Creat: Object file..$(CL_N)"
+		@mkdir -p $(D_OBJ)
+		@$(NASM) $(INC) $< -o $@
 
 clean:
 		@echo "$(CL_R)>clean: $(CL_B)$(NAME) objects$(CL_N)"
@@ -85,7 +80,7 @@ re: fclean all
 
 run: $(OBJ) $(EXE)
 
-$(D_EXE)%: $(D_OBJ)
+$(D_EXE)%: $(D_OBJ)%.o
 		echo "$(CL_V)>Creat: exec file..$(CL_N)"
 		mkdir -p $(D_EXE)
 		$(LD) $^ -o $@
